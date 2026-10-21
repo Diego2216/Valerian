@@ -1,0 +1,9 @@
+{
+  "name": "VALERIAN Assistente",
+  "short_name": "VALERIAN",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#101015",
+  "theme_color": "#101015",
+  "description": "Painel de automação residencial em demonstração"
+}
