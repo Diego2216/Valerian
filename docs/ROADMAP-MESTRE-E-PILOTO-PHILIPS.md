@@ -88,3 +88,10 @@ Atualizado em 22/10/2026. Status: planejamento técnico; não confundir com recu
 - Resultado: HomeKit no iPhone controla ON e OFF reais da Philips 55PUG8100/78; ambos validados pelo usuário.
 - Isto **não** significa integração já pronta no VALERIAN. Próxima etapa: avaliar bridge local autenticada ou fluxo de Atalhos do iOS que realmente exponha o controle, sem inventar API HomeKit acessível à PWA.
 - Testes seguintes: controle de entrada, volume e Ambilight (sem assumir disponibilidade), falha de conexão, autenticação e retorno de estado.
+
+## Teste ponta a ponta VALERIAN → Atalhos → HomeKit → Philips (22/10/2026)
+- Usuário criou atalho iOS **VALERIAN Desligar TV** com ação Casa configurada para desligar a Philips 55PUG8100/78.
+- Atalho testado diretamente no app Atalhos: TV desligou fisicamente.
+- Botão **Desligar TV** do VALERIAN foi acionado no iPhone e **TV desligou fisicamente**, conforme confirmação explícita do usuário.
+- Primeiro teste físico ponta a ponta de desligamento **APROVADO**. Não extrapolar para comando de voz, ligar, feedback de estado ou execução em segundo plano, ainda não testados pelo VALERIAN.
+- Próximo teste: criar **VALERIAN Ligar TV** com ação Casa 'Ligar', validar execução direta no Atalhos e depois pelo botão VALERIAN; testar voz separadamente.
