@@ -40,7 +40,11 @@ function answer(text){
    if(!off&&!on)msg='Você quer ligar ou desligar a luz de '+devices[rooms[0].i].name+'?';
    else{rooms.forEach(d=>data.lights[d.i]=!off);msg=rooms.length===1?(off?'Desligando':'Ligando')+' luz '+(rooms[0].i===3?'do ':'da ')+devices[rooms[0].i].name+'.':(off?'Desligando':'Ligando')+' as luzes de '+rooms.map(d=>devices[d.i].name).join(' e ')+'.';}
   }else if(/\b(luz|luzes|ligar|liga|acender|desligar|apagar)\b/.test(t))msg='Qual luz? Sala, quarto, cozinha ou escritório?';
-  else if(t.includes('musica')||t.includes('reproduzir')){data.music=!/parar|pausar|deslig/.test(t);msg='Reprodutor virtual '+(data.music?'iniciado.':'pausado.');}
+  else if(/\b(volume)\b/.test(t)){const n=t.match(/\b(\d{1,3})\b/);if(n){data.volume=Math.min(100,Math.max(0,Number(n[1])));msg='Volume virtual ajustado para '+data.volume+' por cento.'}else if(/aument|subir|mais alto/.test(t)){data.volume=Math.min(100,data.volume+10);msg='Volume virtual em '+data.volume+' por cento.'}else if(/diminu|baix|mais baixo/.test(t)){data.volume=Math.max(0,data.volume-10);msg='Volume virtual em '+data.volume+' por cento.'}else msg='Diga o volume desejado de zero a cem.';}
+  else if(/\b(proxima|avancar|pular)\b/.test(t)){data.track=(data.track+1)%5;msg='Próxima faixa virtual.';}
+  else if(/\b(anterior|voltar faixa)\b/.test(t)){data.track=(data.track+4)%5;msg='Faixa virtual anterior.';}
+  else if(/\b(musica|reproduzir|tocar|pausar|pause|parar)\b/.test(t)){data.music=!/parar|pausar|pause|deslig/.test(t);msg='Reprodutor virtual '+(data.music?'iniciado.':'pausado.');}
+  else if(/\b(abrir|mostrar|ir para|exibir)\b/.test(t)){const views=[['casa','house'],['inicio','home'],['rotinas','routines'],['musica','music'],['valerian','assistant'],['assistente','assistant']];const found=views.find(v=>new RegExp('\\b'+v[0]+'\\b').test(t));if(found){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===found[1]));document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===found[1]));msg='Abrindo '+found[0]+'.';}else msg='Qual tela deseja abrir?';}
  }
  data.history.push('Você: '+text+' → '+msg);data.history=data.history.slice(-20);render();return msg;
 }
