@@ -82,3 +82,9 @@ Atualizado em 22/10/2026. Status: planejamento técnico; não confundir com recu
 - Teste de ligar novamente ainda pendente; não declarar ON confirmado.
 - Matter no Apple Casa permaneceu marcado 'Incompatível', embora HomeKit tenha fornecido controle.
 - Integração VALERIAN→TV **ainda não implementada**. PWA GitHub Pages não tem acesso direto às APIs HomeKit do app Casa; avaliar ponte local segura ou Atalhos iOS (conforme ações suportadas), sem presumir acesso remoto nem expor credenciais.
+
+## Teste físico HomeKit bidirecional confirmado (22/10/2026)
+- Após validar desligamento físico, usuário confirmou que a TV **voltou a ligar** pelo botão de energia do aplicativo Casa no iPhone.
+- Resultado: HomeKit no iPhone controla ON e OFF reais da Philips 55PUG8100/78; ambos validados pelo usuário.
+- Isto **não** significa integração já pronta no VALERIAN. Próxima etapa: avaliar bridge local autenticada ou fluxo de Atalhos do iOS que realmente exponha o controle, sem inventar API HomeKit acessível à PWA.
+- Testes seguintes: controle de entrada, volume e Ambilight (sem assumir disponibilidade), falha de conexão, autenticação e retorno de estado.
