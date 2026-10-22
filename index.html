@@ -58,7 +58,7 @@ function sayVoice(message){
  voiceSpeaking=true;
  try{recognizer?.stop()}catch{}
  speechSynthesis.cancel();
- const u=new SpeechSynthesisUtterance(message);u.lang='pt-BR';u.rate=.95;
+ const u=new SpeechSynthesisUtterance(message);u.lang='pt-BR';u.rate=.90;u.pitch=1.06;u.volume=1;
  const voices=speechSynthesis.getVoices();const pt=voices.find(v=>v.lang.toLowerCase().startsWith('pt-br')&&/female|luciana|francisca/i.test(v.name))||voices.find(v=>v.lang.toLowerCase().startsWith('pt-br'));if(pt)u.voice=pt;
  const resume=()=>{voiceSpeaking=false;if(voiceEnabled) setTimeout(startVoice,450)};
  u.onstart=()=>voiceState('Respondendo por voz...');
