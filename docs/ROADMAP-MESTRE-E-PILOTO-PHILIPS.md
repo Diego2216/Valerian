@@ -75,3 +75,10 @@ Atualizado em 22/10/2026. Status: planejamento técnico; não confundir com recu
 - **Confirmado pelo fabricante:** Titan OS, experiência Smart Home Matter, Apple AirPlay, Wi-Fi e Ethernet, Ambilight trilateral. A existência de Matter não garante acesso a todos os comandos desejados nem acesso direto pela PWA.
 - Próxima verificação com usuário: iPhone e TV na mesma rede; localizar no menu TV integração Matter/Apple Home ou código de pareamento. Não solicitar senha Wi-Fi nem publicar PIN.
 - Teste sugerido: parear TV no Apple Casa (se disponível) ou controlador Matter autorizado, validar ligar/desligar; em seguida avaliar ponte Home Assistant para VALERIAN e comandos adicionais. Ambilight e volume dependem das capacidades efetivamente expostas.
+
+## Teste físico HomeKit confirmado (22/10/2026)
+- TV Philips 55PUG8100/78 foi adicionada ao Apple Casa como TV via HomeKit/AirPlay; interface exibiu botão de energia e seleção de entradas.
+- Usuário confirmou que ao acionar desligar no app Casa a **TV desligou fisicamente**. Controle OFF real comprovado, independente do VALERIAN.
+- Teste de ligar novamente ainda pendente; não declarar ON confirmado.
+- Matter no Apple Casa permaneceu marcado 'Incompatível', embora HomeKit tenha fornecido controle.
+- Integração VALERIAN→TV **ainda não implementada**. PWA GitHub Pages não tem acesso direto às APIs HomeKit do app Casa; avaliar ponte local segura ou Atalhos iOS (conforme ações suportadas), sem presumir acesso remoto nem expor credenciais.
