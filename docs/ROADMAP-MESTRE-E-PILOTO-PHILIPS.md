@@ -101,3 +101,9 @@ Atualizado em 22/10/2026. Status: planejamento técnico; não confundir com recu
 - Fluxo validado: VALERIAN PWA → deep link `shortcuts://run-shortcut` → Atalhos → HomeKit → TV.
 - O iOS exibe confirmação 'Abrir com Atalhos?' antes da troca de aplicativo; **não há operação transparente em segundo plano** neste método.
 - Próximos testes: voz para ligar/desligar TV; verificar se o iOS permite deep link iniciado por reconhecimento de fala (pode exigir gesto); testar entrada, volume e Ambilight apenas se compatíveis.
+
+## Validação do desligamento por voz — 22/10/2026
+- Usuário confirmou o fluxo real: pronunciou 'Desligar TV' no VALERIAN; iOS exibiu pop-up de autorização; após permitir, o app Casa/Atalhos abriu e a Philips desligou fisicamente.
+- Portanto, o reconhecimento e encaminhamento de comando vocal para desligar a TV estão validados em primeiro plano, com intervenção explícita no pop-up iOS.
+- Botões de ligar/desligar já validados; **ligar por voz ainda precisa de teste separado**.
+- Não alegar operação hands-free, contínua ou sem confirmação do iOS.
