@@ -107,3 +107,11 @@ Atualizado em 22/10/2026. Status: planejamento técnico; não confundir com recu
 - Portanto, o reconhecimento e encaminhamento de comando vocal para desligar a TV estão validados em primeiro plano, com intervenção explícita no pop-up iOS.
 - Botões de ligar/desligar já validados; **ligar por voz ainda precisa de teste separado**.
 - Não alegar operação hands-free, contínua ou sem confirmação do iOS.
+
+## Pesquisa de integração sem pop-up / sem PC (22/10/2026)
+- Requisito do usuário: falar **VALERIAN**, controlar Philips 55PUG8100/78 sem confirmação 'Abrir esta página no Atalhos?', usando somente iPhone + TV, sem PC.
+- Philips confirma Titan OS e suporte Matter neste modelo: https://www.philips.com.br/c-p/55PUG8100_78/tv-led-4k-ambilight .
+- Existem integrações comunitárias JointSpace para TVs Philips Titan OS, porém compatibilidade com **55PUG8100/78** e uso direto via Safari/PWA não foram demonstrados: https://github.com/daCream87/uc-philips-titanos .
+- PWA hospedada em HTTPS não tem acesso direto à API HomeKit do iOS; `shortcuts://` abre outro app e gera confirmação de segurança do sistema, que não pode ser automaticamente aceita pelo JavaScript.
+- Sem hub/controlador Matter ou servidor local e sem API TV confirmada compatível com Safari, não prometer controle sem pop-up.
+- Manter integração atual funcionando; pesquisa futura: avaliar se a TV expõe API local e se navegador pode acessá-la de forma segura (HTTPS, CORS, autenticação, rede local); avaliar opções iOS nativas se necessário.
