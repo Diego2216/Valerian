@@ -58,8 +58,8 @@ function sayVoice(message){
  voiceSpeaking=true;
  try{recognizer?.stop()}catch{}
  speechSynthesis.cancel();
- const u=new SpeechSynthesisUtterance(message);u.lang='pt-BR';u.rate=.94;u.pitch=1.0;u.volume=1;
- const voices=speechSynthesis.getVoices();const ptBR=voices.filter(v=>v.lang.toLowerCase().replace('_','-')==='pt-br');const pt=ptBR.find(v=>/premium|enhanced|natural|neural|premium|aprimorada/i.test(v.name))||ptBR.find(v=>/luciana|francisca|female/i.test(v.name))||ptBR[0];if(pt)u.voice=pt;
+ const u=new SpeechSynthesisUtterance(message);u.lang='pt-BR';u.rate=1.04;u.pitch=1.13;u.volume=1;
+ const voices=speechSynthesis.getVoices();const ptBR=voices.filter(v=>v.lang.toLowerCase().replace('_','-')==='pt-br');const pt=ptBR.find(v=>/luciana|francisca/i.test(v.name)&&/premium|enhanced|natural|neural|aprimorada/i.test(v.name))||ptBR.find(v=>/luciana|francisca/i.test(v.name))||ptBR.find(v=>/female|feminina/i.test(v.name))||ptBR.find(v=>/premium|enhanced|natural|neural|aprimorada/i.test(v.name))||ptBR[0];if(pt)u.voice=pt;
  const resume=()=>{voiceSpeaking=false;if(voiceEnabled) setTimeout(startVoice,450)};
  u.onstart=()=>voiceState('Respondendo por voz...');
  u.onend=resume;
