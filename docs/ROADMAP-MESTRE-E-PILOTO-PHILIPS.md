@@ -68,3 +68,10 @@ Atualizado em 22/10/2026. Status: planejamento técnico; não confundir com recu
 - TPM257L aparece associado a Philips Titan OS em relatos públicos, mas a plataforma/firmware **não identifica unicamente o modelo comercial**; solicitar modelo exato (ex. xxPUGxxxx/78) em Sobre a TV ou etiqueta traseira.
 - Para Titan OS, integração via API JointSpace antiga não é garantida; relatos de controle via API local/MQTT são experimentais e dependentes de modelo. Não prometer controle Ambilight antes de validar.
 - Próximo passo: confirmar modelo e TV/iPhone na mesma rede; depois testar descoberta e pareamento com método seguro apropriado.
+
+## Modelo comercial confirmado em foto posterior
+- Philips Ambilight **55PUG8100/78**, 55 polegadas, firmware **TPM257L_V253.003.073.081**. Não publicar número de série ou endereços MAC.
+- Fonte oficial Philips: https://www.philips.com.br/c-p/55PUG8100_78/tv-led-4k-ambilight ; ficha https://www.documents.philips.com/assets/20251120/9924e7dc24fe497285fab39b009f15cd.pdf ; manual https://www.documents.philips.com/assets/20250626/bc9b71e9ab744d19a369b3080031fc18.pdf .
+- **Confirmado pelo fabricante:** Titan OS, experiência Smart Home Matter, Apple AirPlay, Wi-Fi e Ethernet, Ambilight trilateral. A existência de Matter não garante acesso a todos os comandos desejados nem acesso direto pela PWA.
+- Próxima verificação com usuário: iPhone e TV na mesma rede; localizar no menu TV integração Matter/Apple Home ou código de pareamento. Não solicitar senha Wi-Fi nem publicar PIN.
+- Teste sugerido: parear TV no Apple Casa (se disponível) ou controlador Matter autorizado, validar ligar/desligar; em seguida avaliar ponte Home Assistant para VALERIAN e comandos adicionais. Ambilight e volume dependem das capacidades efetivamente expostas.
