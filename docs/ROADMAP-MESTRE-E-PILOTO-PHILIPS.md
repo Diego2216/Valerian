@@ -62,3 +62,9 @@ Atualizado em 22/10/2026. Status: planejamento técnico; não confundir com recu
 3. Criar conector Philips adequado e pareamento seguro, sem chaves no PWA.
 4. Testar comando real, estado e erros no iPhone; só então marcar integração como concluída.
 5. Expandir gradualmente para outras categorias, preservando funcionamento existente.
+
+## Evidência recebida: tela de software da TV (22/10/2026)
+- Firmware exibido: TPM257L_V253.003.073.081; data da compilação 2026/05/28 11:48:39.
+- TPM257L aparece associado a Philips Titan OS em relatos públicos, mas a plataforma/firmware **não identifica unicamente o modelo comercial**; solicitar modelo exato (ex. xxPUGxxxx/78) em Sobre a TV ou etiqueta traseira.
+- Para Titan OS, integração via API JointSpace antiga não é garantida; relatos de controle via API local/MQTT são experimentais e dependentes de modelo. Não prometer controle Ambilight antes de validar.
+- Próximo passo: confirmar modelo e TV/iPhone na mesma rede; depois testar descoberta e pareamento com método seguro apropriado.
