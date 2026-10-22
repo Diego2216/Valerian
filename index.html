@@ -23,7 +23,27 @@ const $=id=>document.getElementById(id);
 function save(){localStorage.setItem('valerian-v12',JSON.stringify(data))}
 function render(){const cards=devices.map((d,i)=>'<div class="card device '+(data.lights[i]?'on':'')+'"><div class="ico">'+d.icon+'</div><div><h3>'+d.name+'</h3><span class="muted">'+(data.lights[i]?'Ligado':'Desligado')+'</span></div><button class="switch" data-toggle="'+i+'">'+(data.lights[i]?'Desligar':'Ligar')+'</button></div>').join('');$('quick').innerHTML=cards;$('devices').innerHTML=cards;const scenes=[['☀️','Bom dia','bomdia'],['🌙','Boa noite','noite'],['🎬','Cinema','cinema'],['🏡','Cheguei','cheguei'],['🚪','Saindo','saindo']];$('scenes').innerHTML=scenes.map(s=>'<button class="scene" data-scene="'+s[2]+'"><span>'+s[0]+'</span><b>'+s[1]+'</b></button>').join('');$('routine-cards').innerHTML=scenes.map(s=>'<button class="scene" data-scene="'+s[2]+'"><span>'+s[0]+'</span><b>'+s[1]+'</b></button>').join('');$('play').textContent=$('play-home').textContent=data.music?'⏸':'▶';$('music-status').textContent=data.music?'Reproduzindo (simulação)':'Reprodutor demonstrativo';$('music-detail').textContent='Faixa virtual '+(data.track+1)+' • Spotify não conectado';$('volume').value=data.volume;$('volume-label').textContent=data.volume+'%';$('history').textContent=data.history.length?data.history.slice(-8).reverse().join('\n'):'Nenhum comando ainda.';save()}
 function routine(r){const scenes={bomdia:[true,true,true,true],noite:[false,false,false,false],cinema:[true,false,false,false],cheguei:[true,true,true,true],saindo:[false,false,false,false]};data.lights=[...scenes[r]];if(r==='cinema')data.music=true;if(r==='noite'||r==='saindo')data.music=false;render();return 'Rotina '+({bomdia:'Bom dia',noite:'Boa noite',cinema:'Cinema',cheguei:'Cheguei',saindo:'Saindo'}[r])+' ativada na simulação.'}
-function answer(text){const t=text.toLocaleLowerCase('pt-BR').normalize('NFD').replace(/[\u0300-\u036f]/g,'');let msg='Ainda não entendi. Tente: ligar sala, apagar quarto, modo cinema ou boa noite.';if(t.includes('cinema'))msg=routine('cinema');else if(t.includes('boa noite'))msg=routine('noite');else if(t.includes('bom dia'))msg=routine('bomdia');else if(t.includes('cheguei'))msg=routine('cheguei');else if(t.includes('saindo'))msg=routine('saindo');else if(t.includes('todas')||t.includes('tudo')){const on=!/deslig|apag/.test(t);data.lights=data.lights.map(()=>on);msg='Todas as luzes virtuais '+(on?'ligadas.':'desligadas.')}else{const i=devices.findIndex(d=>t.includes(d.name.toLocaleLowerCase('pt-BR').normalize('NFD').replace(/[\u0300-\u036f]/g,'')));if(i>=0){data.lights[i]=!/deslig|apag/.test(t);msg='Luz virtual de '+devices[i].name+' '+(data.lights[i]?'ligada.':'desligada.')}else if(t.includes('musica')||t.includes('reproduzir')){data.music=!/parar|pausar|deslig/.test(t);msg='Reprodutor virtual '+(data.music?'iniciado.':'pausado.')}}data.history.push('Você: '+text+' → '+msg);data.history=data.history.slice(-20);render();return msg}
+function answer(text){
+ const t=text.toLocaleLowerCase('pt-BR').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+ let msg='Não entendi o comando. Diga o cômodo e se deseja ligar ou desligar.';
+ if(t.includes('cinema'))msg=routine('cinema');
+ else if(t.includes('boa noite'))msg=routine('noite');
+ else if(t.includes('bom dia'))msg=routine('bomdia');
+ else if(t.includes('cheguei'))msg=routine('cheguei');
+ else if(t.includes('saindo'))msg=routine('saindo');
+ else if(/\b(todas|todos|tudo)\b/.test(t)){const on=!/deslig|apag/.test(t);data.lights=data.lights.map(()=>on);msg='Todas as luzes virtuais '+(on?'ligadas.':'desligadas.');}
+ else {
+  const rooms=devices.map((d,i)=>({i,name:d.name.toLocaleLowerCase('pt-BR').normalize('NFD').replace(/[\u0300-\u036f]/g,'')})).filter(d=>new RegExp('\\b'+d.name+'\\b').test(t));
+  if(rooms.length){
+   const off=/deslig|apag|apaga|apague|desativa/.test(t);
+   const on=/lig|acend|ativa/.test(t);
+   if(!off&&!on)msg='Você quer ligar ou desligar a luz de '+devices[rooms[0].i].name+'?';
+   else{rooms.forEach(d=>data.lights[d.i]=!off);msg=rooms.length===1?(off?'Desligando':'Ligando')+' luz '+(rooms[0].i===3?'do ':'da ')+devices[rooms[0].i].name+'.':(off?'Desligando':'Ligando')+' as luzes de '+rooms.map(d=>devices[d.i].name).join(' e ')+'.';}
+  }else if(/\b(luz|luzes|ligar|liga|acender|desligar|apagar)\b/.test(t))msg='Qual luz? Sala, quarto, cozinha ou escritório?';
+  else if(t.includes('musica')||t.includes('reproduzir')){data.music=!/parar|pausar|deslig/.test(t);msg='Reprodutor virtual '+(data.music?'iniciado.':'pausado.');}
+ }
+ data.history.push('Você: '+text+' → '+msg);data.history=data.history.slice(-20);render();return msg;
+}
 function submit(which){const inp=$(which+'-command');if(!inp.value.trim())return;const response=answer(inp.value.trim());$(which+'-reply').textContent=response;inp.value=''}
 document.addEventListener('click',e=>{const tab=e.target.closest('[data-view]');if(tab){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===tab.dataset.view));document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b===tab));scrollTo(0,0)}const sw=e.target.closest('[data-toggle]');if(sw){data.lights[Number(sw.dataset.toggle)]=!data.lights[Number(sw.dataset.toggle)];render()}const scene=e.target.closest('[data-scene]');if(scene){const msg=routine(scene.dataset.scene);$('home-reply').textContent=msg;$('assistant-reply').textContent=msg}});
 $('home-send').onclick=()=>submit('home');$('assistant-send').onclick=()=>submit('assistant');['home','assistant'].forEach(n=>$(n+'-command').addEventListener('keydown',e=>{if(e.key==='Enter')submit(n)}));
