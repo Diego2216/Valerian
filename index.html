@@ -37,7 +37,7 @@ function launchTvShortcut(mode){
 function answer(text){
  const t=text.toLocaleLowerCase('pt-BR').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
  let msg='Não entendi o comando. Diga o cômodo e se deseja ligar ou desligar.';
- if(/\\b(tv|televisao|philips|ambilight)\\b/.test(t)&&/\\b(ligar|liga|acender|desligar|desliga|apagar|apaga)\\b/.test(t))msg=launchTvShortcut(/deslig|apag/.test(t)?'off':'on');
+ if(/\b(tv|televisao|philips|ambilight)\b/.test(t)&&/\b(ligar|liga|acender|desligar|desliga|apagar|apaga|ligue|desligue|acenda|apague)\b/.test(t))msg=launchTvShortcut(/deslig|apag/.test(t)?'off':'on');
  else if(t.includes('cinema'))msg=routine('cinema');
  else if(t.includes('boa noite'))msg=routine('noite');
  else if(t.includes('bom dia'))msg=routine('bomdia');
@@ -96,9 +96,9 @@ voiceButton.addEventListener('click',()=>{
  recognizer.onresult=e=>{
   const heard=Array.from(e.results).map(r=>r[0].transcript).join(' ').trim();
   const norm=s=>s.toLocaleLowerCase('pt-BR').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-  $('voice-heard').textContent='Última frase reconhecida: '+heard;const t=norm(heard),match=t.match(/\bvaleria\b[\s,.:!?-]*(.*)/);
+  $('voice-heard').textContent='Última frase reconhecida: '+heard;const t=norm(heard),match=t.match(/\b(?:valerian|valeriam|valeria)\b[\s,.:!?-]*(.*)/);
   if(match){awaitCommand=false;const command=match[1].trim();if(command){const reply=answer(command);$('assistant-reply').textContent=reply;$('home-reply').textContent=reply;sayVoice(reply)}else{awaitCommand=true;sayVoice('Estou ouvindo. Pode falar.')}}
-  else if(awaitCommand || /\b(boa noite|bom dia|cinema|cheguei|saindo|ligar|liga|desligar|desliga|apagar|apaga|acender|acende|musica|música|reproduzir|pausar)\b/i.test(t)){awaitCommand=false;const reply=answer(heard);$('assistant-reply').textContent=reply;$('home-reply').textContent=reply;sayVoice(reply)}
+  else if(awaitCommand || /\b(boa noite|bom dia|cinema|cheguei|saindo|ligar|liga|desligar|desliga|apagar|apaga|acender|acende|musica|música|reproduzir|pausar|tv|televisao|philips|ambilight|ligue|desligue|volume|abrir)\b/i.test(t)){awaitCommand=false;const reply=answer(heard);$('assistant-reply').textContent=reply;$('home-reply').textContent=reply;sayVoice(reply)}
  };
  recognizer.onerror=e=>{voiceStarting=false;$('voice-heard').textContent='Falha no reconhecimento: '+e.error;if(['not-allowed','service-not-allowed','audio-capture','language-not-supported'].includes(e.error))disableVoice('Microfone ou reconhecimento indisponível: '+e.error);else voiceState('Reconhecimento interrompido: '+e.error)};
  recognizer.onend=()=>{voiceStarting=false;if(voiceEnabled&&!voiceSpeaking&&!document.hidden)setTimeout(startVoice,700)};
