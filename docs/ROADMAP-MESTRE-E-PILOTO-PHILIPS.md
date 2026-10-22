@@ -95,3 +95,9 @@ Atualizado em 22/10/2026. Status: planejamento técnico; não confundir com recu
 - Botão **Desligar TV** do VALERIAN foi acionado no iPhone e **TV desligou fisicamente**, conforme confirmação explícita do usuário.
 - Primeiro teste físico ponta a ponta de desligamento **APROVADO**. Não extrapolar para comando de voz, ligar, feedback de estado ou execução em segundo plano, ainda não testados pelo VALERIAN.
 - Próximo teste: criar **VALERIAN Ligar TV** com ação Casa 'Ligar', validar execução direta no Atalhos e depois pelo botão VALERIAN; testar voz separadamente.
+
+## Marco: ambos os botões VALERIAN controlam a TV (22/10/2026)
+- Usuário confirmou: botões **Ligar TV** e **Desligar TV** no VALERIAN executam ações físicas reais na Philips 55PUG8100/78 via Atalhos iOS e HomeKit.
+- Fluxo validado: VALERIAN PWA → deep link `shortcuts://run-shortcut` → Atalhos → HomeKit → TV.
+- O iOS exibe confirmação 'Abrir com Atalhos?' antes da troca de aplicativo; **não há operação transparente em segundo plano** neste método.
+- Próximos testes: voz para ligar/desligar TV; verificar se o iOS permite deep link iniciado por reconhecimento de fala (pode exigir gesto); testar entrada, volume e Ambilight apenas se compatíveis.
