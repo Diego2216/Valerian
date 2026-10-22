@@ -37,8 +37,11 @@ function launchTvShortcut(mode){
 function answer(text){
  const t=text.toLocaleLowerCase('pt-BR').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
  let msg='Não entendi o comando. Diga o cômodo e se deseja ligar ou desligar.';
- if(/\b(tv|televisao|philips|ambilight)\b/.test(t)&&/\b(ligar|liga|acender|desligar|desliga|apagar|apaga|ligue|desligue|acenda|apague)\b/.test(t))msg=launchTvShortcut(/deslig|apag/.test(t)?'off':'on');
- else if(t.includes('cinema'))msg=routine('cinema');
+ const tvMention=/(?:\btv\b|\bte\s*ve\b|\btelevis(?:ao|or)\b|\bphilips\b|\bambilight\b)/.test(t);
+ const powerOff=/\b(deslig\w*|apag\w*|desativ\w*|off)\b/.test(t);
+ const powerOn=/\b(lig\w*|acend\w*|ativ\w*|on)\b/.test(t);
+ if(tvMention && (powerOff||powerOn))msg=launchTvShortcut(powerOff?'off':'on');
+ else if(tvMention)msg='Você quer ligar ou desligar a TV Philips?'; else if(t.includes('cinema'))msg=routine('cinema');
  else if(t.includes('boa noite'))msg=routine('noite');
  else if(t.includes('bom dia'))msg=routine('bomdia');
  else if(t.includes('cheguei'))msg=routine('cheguei');
