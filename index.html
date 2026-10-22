@@ -61,7 +61,11 @@ function sayVoice(message){
  const u=new SpeechSynthesisUtterance(message);u.lang='pt-BR';u.rate=.95;
  const voices=speechSynthesis.getVoices();const pt=voices.find(v=>v.lang.toLowerCase().startsWith('pt-br')&&/female|luciana|francisca/i.test(v.name))||voices.find(v=>v.lang.toLowerCase().startsWith('pt-br'));if(pt)u.voice=pt;
  const resume=()=>{voiceSpeaking=false;if(voiceEnabled) setTimeout(startVoice,450)};
- u.onend=resume;u.onerror=resume;speechSynthesis.speak(u);
+ u.onstart=()=>voiceState('Respondendo por voz...');
+ u.onend=resume;
+ u.onerror=e=>{voiceState('Falha ao reproduzir voz: '+(e.error||'desconhecida'));resume()};
+ // Safari pode interromper a fala se o reconhecimento ainda estiver encerrando.
+ setTimeout(()=>{try{speechSynthesis.speak(u);speechSynthesis.resume()}catch(e){resume()}},220);
 }
 function startVoice(){
  if(!voiceEnabled||voiceSpeaking||voiceStarting||document.hidden||!recognizer)return;
@@ -82,6 +86,14 @@ voiceButton.addEventListener('click',()=>{
  };
  recognizer.onerror=e=>{voiceStarting=false;$('voice-heard').textContent='Falha no reconhecimento: '+e.error;if(['not-allowed','service-not-allowed','audio-capture','language-not-supported'].includes(e.error))disableVoice('Microfone ou reconhecimento indisponível: '+e.error);else voiceState('Reconhecimento interrompido: '+e.error)};
  recognizer.onend=()=>{voiceStarting=false;if(voiceEnabled&&!voiceSpeaking&&!document.hidden)setTimeout(startVoice,700)};
+ // Inicializa a saída de áudio no gesto explícito de ativar escuta (Safari/iOS).
+ if('speechSynthesis' in window){
+  try{
+   const unlock=new SpeechSynthesisUtterance(' ');
+   unlock.lang='pt-BR';unlock.volume=0;
+   speechSynthesis.speak(unlock);
+  }catch(e){}
+ }
  voiceEnabled=true;voiceState('Solicitando microfone...');startVoice();
 });
 document.addEventListener('visibilitychange',()=>{if(document.hidden){try{recognizer?.stop()}catch{}if(voiceEnabled)voiceState('Pausado: aplicativo em segundo plano')}else if(voiceEnabled)setTimeout(startVoice,600)});
