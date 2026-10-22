@@ -6,6 +6,8 @@
 <div class="top"><div class="brand">V<span>✦</span> VALERIAN</div><div class="pill">● DEMONSTRAÇÃO LOCAL</div></div>
 <section id="home" class="view active"><div class="hero"><div><div class="eyebrow">Sua central inteligente</div><div class="clock" id="clock">--:--</div><div class="date" id="date">Carregando...</div><p class="sub" id="greeting">Bem-vindo ao VALERIAN</p></div><div class="orb" aria-label="Identidade visual Valerian">✦</div></div>
 <div class="section"><h2>Acesso rápido</h2><span class="sub">Casa virtual</span></div><div class="grid" id="quick"></div>
+<div class="section"><h2>TV Philips Ambilight</h2><span class="sub">Integração experimental via Atalhos</span></div>
+<div class="card" style="margin-bottom:14px"><h3 style="margin-top:0">Philips 55PUG8100/78 · Sala de Estar</h3><p class="sub">HomeKit ligar/desligar confirmado no app Casa. Para usar os botões do VALERIAN, crie dois Atalhos no iPhone com os nomes abaixo e ações do app Casa.</p><div style="display:flex;flex-wrap:wrap;gap:8px;margin:12px 0"><button class="switch" data-tv="on">Ligar TV</button><button class="switch" data-tv="off">Desligar TV</button></div><p class="log" id="tv-status" role="status">Ponte por Atalhos ainda não configurada. Não há confirmação automática de execução.</p><p class="notice">Crie no app Atalhos: <b>VALERIAN Ligar TV</b> e <b>VALERIAN Desligar TV</b>, cada um com a ação Casa correspondente. Ao tocar, o iOS tentará abrir o Atalho. Pode exigir confirmação. Sem controle em segundo plano.</p></div>
 <div class="section"><h2>Suas rotinas</h2></div><div class="scenes" id="scenes"></div>
 <div class="section"><h2>Entretenimento</h2></div><div class="card media"><div class="album">♫</div><div class="grow"><h3>Música ambiente</h3><p id="music-status">Reprodutor demonstrativo</p></div><button class="round" id="play-home" aria-label="Alternar reprodução">▶</button></div>
 <div class="section"><h2>VALERIAN responde</h2></div><div class="card"><div class="command"><input id="home-command" placeholder="Ex.: ligar luz da sala" aria-label="Comando para Valerian"><button class="primary" id="home-send">Enviar</button></div><p class="log" id="home-reply">Pronto para seus comandos.</p></div></section>
@@ -23,10 +25,20 @@ const $=id=>document.getElementById(id);
 function save(){localStorage.setItem('valerian-v12',JSON.stringify(data))}
 function render(){const cards=devices.map((d,i)=>'<div class="card device '+(data.lights[i]?'on':'')+'"><div class="ico">'+d.icon+'</div><div><h3>'+d.name+'</h3><span class="muted">'+(data.lights[i]?'Ligado':'Desligado')+'</span></div><button class="switch" data-toggle="'+i+'">'+(data.lights[i]?'Desligar':'Ligar')+'</button></div>').join('');$('quick').innerHTML=cards;$('devices').innerHTML=cards;const scenes=[['☀️','Bom dia','bomdia'],['🌙','Boa noite','noite'],['🎬','Cinema','cinema'],['🏡','Cheguei','cheguei'],['🚪','Saindo','saindo']];$('scenes').innerHTML=scenes.map(s=>'<button class="scene" data-scene="'+s[2]+'"><span>'+s[0]+'</span><b>'+s[1]+'</b></button>').join('');$('routine-cards').innerHTML=scenes.map(s=>'<button class="scene" data-scene="'+s[2]+'"><span>'+s[0]+'</span><b>'+s[1]+'</b></button>').join('');$('play').textContent=$('play-home').textContent=data.music?'⏸':'▶';$('music-status').textContent=data.music?'Reproduzindo (simulação)':'Reprodutor demonstrativo';$('music-detail').textContent='Faixa virtual '+(data.track+1)+' • Spotify não conectado';$('volume').value=data.volume;$('volume-label').textContent=data.volume+'%';$('history').textContent=data.history.length?data.history.slice(-8).reverse().join('\n'):'Nenhum comando ainda.';save()}
 function routine(r){const scenes={bomdia:[true,true,true,true],noite:[false,false,false,false],cinema:[true,false,false,false],cheguei:[true,true,true,true],saindo:[false,false,false,false]};data.lights=[...scenes[r]];if(r==='cinema')data.music=true;if(r==='noite'||r==='saindo')data.music=false;render();return 'Rotina '+({bomdia:'Bom dia',noite:'Boa noite',cinema:'Cinema',cheguei:'Cheguei',saindo:'Saindo'}[r])+' ativada na simulação.'}
+const tvShortcutNames={on:'VALERIAN Ligar TV',off:'VALERIAN Desligar TV'};
+function launchTvShortcut(mode){
+ const name=tvShortcutNames[mode];if(!name)return 'Comando de TV não reconhecido.';
+ const msg='Abrindo o Atalho “'+name+'”. A execução física não pode ser confirmada pelo VALERIAN.';
+ $('tv-status').textContent=msg;
+ // Abrir por gesto do usuário é mais confiável; reconhecimento por voz pode ser bloqueado pelo iOS.
+ window.location.href='shortcuts://run-shortcut?name='+encodeURIComponent(name);
+ return msg;
+}
 function answer(text){
  const t=text.toLocaleLowerCase('pt-BR').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
  let msg='Não entendi o comando. Diga o cômodo e se deseja ligar ou desligar.';
- if(t.includes('cinema'))msg=routine('cinema');
+ if(/\\b(tv|televisao|philips|ambilight)\\b/.test(t)&&/\\b(ligar|liga|acender|desligar|desliga|apagar|apaga)\\b/.test(t))msg=launchTvShortcut(/deslig|apag/.test(t)?'off':'on');
+ else if(t.includes('cinema'))msg=routine('cinema');
  else if(t.includes('boa noite'))msg=routine('noite');
  else if(t.includes('bom dia'))msg=routine('bomdia');
  else if(t.includes('cheguei'))msg=routine('cheguei');
@@ -49,7 +61,7 @@ function answer(text){
  data.history.push('Você: '+text+' → '+msg);data.history=data.history.slice(-20);render();return msg;
 }
 function submit(which){const inp=$(which+'-command');if(!inp.value.trim())return;const response=answer(inp.value.trim());$(which+'-reply').textContent=response;inp.value=''}
-document.addEventListener('click',e=>{const tab=e.target.closest('[data-view]');if(tab){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===tab.dataset.view));document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b===tab));scrollTo(0,0)}const sw=e.target.closest('[data-toggle]');if(sw){data.lights[Number(sw.dataset.toggle)]=!data.lights[Number(sw.dataset.toggle)];render()}const scene=e.target.closest('[data-scene]');if(scene){const msg=routine(scene.dataset.scene);$('home-reply').textContent=msg;$('assistant-reply').textContent=msg}});
+document.addEventListener('click',e=>{const tv=e.target.closest('[data-tv]');if(tv)launchTvShortcut(tv.dataset.tv);const tab=e.target.closest('[data-view]');if(tab){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===tab.dataset.view));document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b===tab));scrollTo(0,0)}const sw=e.target.closest('[data-toggle]');if(sw){data.lights[Number(sw.dataset.toggle)]=!data.lights[Number(sw.dataset.toggle)];render()}const scene=e.target.closest('[data-scene]');if(scene){const msg=routine(scene.dataset.scene);$('home-reply').textContent=msg;$('assistant-reply').textContent=msg}});
 $('home-send').onclick=()=>submit('home');$('assistant-send').onclick=()=>submit('assistant');['home','assistant'].forEach(n=>$(n+'-command').addEventListener('keydown',e=>{if(e.key==='Enter')submit(n)}));
 function toggleMusic(){data.music=!data.music;render()}$('play').onclick=toggleMusic;$('play-home').onclick=toggleMusic;$('next').onclick=()=>{data.track=(data.track+1)%5;render()};$('prev').onclick=()=>{data.track=(data.track+4)%5;render()};$('volume').oninput=e=>{data.volume=Number(e.target.value);render()};$('speak').onclick=()=>{if(!('speechSynthesis'in window)){alert('Síntese de voz indisponível neste navegador.');return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance($('assistant-reply').textContent);u.lang='pt-BR';speechSynthesis.speak(u)};
 
