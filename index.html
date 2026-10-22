@@ -58,7 +58,7 @@ voiceButton.addEventListener('click',()=>{
   const norm=s=>s.toLocaleLowerCase('pt-BR').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
   $('voice-heard').textContent='Última frase reconhecida: '+heard;const t=norm(heard),match=t.match(/\bvaleria\b[\s,.:!?-]*(.*)/);
   if(match){awaitCommand=false;const command=match[1].trim();if(command){const reply=answer(command);$('assistant-reply').textContent=reply;$('home-reply').textContent=reply;sayVoice(reply)}else{awaitCommand=true;sayVoice('Estou ouvindo. Pode falar.')}}
-  else if(awaitCommand){awaitCommand=false;const reply=answer(heard);$('assistant-reply').textContent=reply;$('home-reply').textContent=reply;sayVoice(reply)}
+  else if(awaitCommand || /\b(boa noite|bom dia|cinema|cheguei|saindo|ligar|liga|desligar|desliga|apagar|apaga|acender|acende|musica|música|reproduzir|pausar)\b/i.test(heard)){awaitCommand=false;const reply=answer(heard);$('assistant-reply').textContent=reply;$('home-reply').textContent=reply;sayVoice(reply)}
  };
  recognizer.onerror=e=>{voiceStarting=false;$('voice-heard').textContent='Falha no reconhecimento: '+e.error;if(['not-allowed','service-not-allowed','audio-capture','language-not-supported'].includes(e.error))disableVoice('Microfone ou reconhecimento indisponível: '+e.error);else voiceState('Reconhecimento interrompido: '+e.error)};
  recognizer.onend=()=>{voiceStarting=false;if(voiceEnabled&&!voiceSpeaking&&!document.hidden)setTimeout(startVoice,700)};
